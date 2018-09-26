@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { ART, Text, View, ActivityIndicator, StyleSheet } from "react-native";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { Svg } from 'expo';
+const { G, Path } = Svg;
 
-const { Group, Shape, Surface } = ART;
 import createPDF417 from "./lib/pdf417-min";
 
 export default class RNPDF417 extends Component {
@@ -35,24 +36,22 @@ export default class RNPDF417 extends Component {
 
     const w = width / barcode.num_cols;
     const h = height / barcode.num_rows;
-    const shapes = [];
+    let shapes = "";
 
     barcode.bcode.forEach((line, i) => {
       line.forEach((code, j) => {
         if (code === "1") {
-          shapes.push(
-            `M ${j * w} ${i * h} h ${w} v ${h} h -${w} L ${j * w} ${i * h}`
-          );
+          shapes += `M ${j * w} ${i * h} h ${w} v ${h} h -${w} L ${j * w} ${i * h} z `;
         }
       });
     });
 
     return (
-      <Surface width={width} height={height}>
-        <Group x={0} y={0}>
-          <Shape d={shapes} fill="#000000" />
-        </Group>
-      </Surface>
+      <Svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+        <G x={0} y={0}>
+          <Path d={shapes} fill="#000000" />
+        </G>
+      </Svg>
     );
   }
 }
